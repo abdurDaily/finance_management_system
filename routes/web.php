@@ -17,11 +17,16 @@ use App\Http\Controllers\Backend\HomeController;
 
 Route::get('/', function () {
     return view('index');
-});
-Route::prefix('/dashboard')->name('dashboard.')->group(function(){
-    Route::get('/',[HomeController::class, 'index'])->name('home');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->name('index');
 
+Route::prefix('/dashboard')->middleware(['auth', 'verified'])->name('dashboard.')->group(function(){
+    Route::get('/',[HomeController::class, 'index'])->name('home');
+    Route::get('/logout',[HomeController::class, 'logout'])->name('logout');
+});
+
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
