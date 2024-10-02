@@ -19,7 +19,7 @@ Route::get('/', function () {
     return view('index');
 })->name('index');
 
-Route::prefix('/dashboard')->middleware(['auth', 'verified'])->name('dashboard.')->group(function(){
+Route::prefix('/dashboard')->middleware(['admin'])->name('dashboard.')->group(function(){
     Route::get('/',[HomeController::class, 'index'])->name('home');
     Route::get('/logout',[HomeController::class, 'logout'])->name('logout');
 });

@@ -35,7 +35,15 @@
 				<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
 					<div class="col mx-auto">
 						<div class="card mb-0">
+
+							
+							
 							<div class="card-body">
+								@if(session()->has('error'))
+								<div class="alert alert-success">
+									{{ session()->get('error') }}
+								</div>
+								@endif
 								<div class="p-4">
 									<div class="mb-3 text-center">
 										<img src="assets/images/logo-icon.png" width="60" alt="" />
