@@ -187,28 +187,9 @@
             document.getElementById("error-message").remove();
         }, 2000); // 3000 milliseconds = 3 seconds
 
-    // function setRoleId(roleId) {
-    //     document.getElementById("role_id").value = roleId;
-    // }
-
-
     function setRoleId(roleId) {
-    document.getElementById("role_id").value = roleId;
-    var url = '{{ route('role.get.role.permissions', ['id' => 'roleId']) }}';
-    url = url.replace('roleId', roleId);
-    $.ajax({
-        type: 'GET',
-        url: url,
-        success: function(data) {
-            // Uncheck all checkboxes
-            $('input[name="permissions[]"]').prop('checked', false);
-            // Check the checkboxes based on the permission IDs
-            $.each(data, function(index, value) {
-                $('#permission_' + value).prop('checked', true);
-            });
-        }
-    });
-}
-}
+        document.getElementById("role_id").value = roleId;
+    }
+    
 </script>
 @endpush

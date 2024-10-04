@@ -72,13 +72,7 @@ class RolePermissionController extends Controller
         return back();
     }
 
-
-    public function getRolePermissions($id)
-    {
-        $role = Role::find($id);
-        $permissions = $role->permissions->pluck('id')->toArray();
-        return response()->json($permissions);
-    }
+    
 
     
         
