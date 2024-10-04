@@ -54,7 +54,7 @@
 						<div class="menu-title">Dashboard</div>
 					</a>
 					<ul>
-						<li> <a href="{{ route('role.index') }}"><i class='bx bx-radio-circle'></i>Default</a>
+						<li> <a href="{{ route('role.index') }}"><i class='bx bx-radio-circle'></i>Role & Permission</a>
 						</li>
 					</ul>
 				</li>

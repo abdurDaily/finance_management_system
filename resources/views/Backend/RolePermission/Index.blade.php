@@ -1,7 +1,9 @@
 @extends('Backend.Layout')
 @section('backend_contains')
     <div class="row">
-        <div class="col-lg-4">
+
+        {{-- ROLE --}}
+        <div class="col-lg-6">
             <div class="card">
                 <div class="card-body p-4">
                     @if(session()->has('success'))
@@ -10,13 +12,16 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
-                    <h5 class="mb-4">Assign a New Role</h5>
+                    <h5 class="mb-4">Add a New Role</h5>
                     <form class="row g-3" action="{{ route('role.store') }}" method="post">
                         @csrf
 
                         <div class="col-md-12">
                             <label for="input3" class="form-label">Phone</label>
                             <input type="text" name="role_name" class="form-control" id="input3" placeholder="role name">
+                            @error('role_name')
+                                <strong class="text-danger" id="error-message">{{ $message }}</strong>
+                            @enderror
                         </div>
                        
                         <div class="col-md-12">
@@ -30,6 +35,98 @@
                 </div>
             </div>
         </div>
+        {{-- PERMISSION --}}
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body p-4">
+
+                    @if(session()->has('permission'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session()->get('permission') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                    
+                    <h5 class="mb-4">Add a new permission</h5>
+                    <form class="row g-3" action="{{ route('role.store.permission') }}" method="post">
+                        @csrf
+
+                        <div class="col-md-12">
+                            <label for="input3" class="form-label">Phone</label>
+                            <input type="text" name="permission_name" class="form-control" id="input3" placeholder="role name">
+                            @error('permission_name')
+                                <strong class="text-danger" id="error-message">{{ $message }}</strong>
+                            @enderror
+                        </div>
+                       
+                        <div class="col-md-12">
+                            <div class="d-md-flex d-grid align-items-center gap-3">
+                                <button type="submit" class="btn btn-primary px-4">Submit</button>
+                                <button type="reset" class="btn btn-light px-4">Reset</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        {{-- ROLE TABLE --}}
+        <div class="col-lg-12">
+            <div class="card p-3 table-responsive">
+                @if(session()->has('deleteRole'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session()->get('deleteRole') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                <table class="table table-bordered  table-hover table-striped ">
+                    <thead>
+                        <tr>
+                            <th scope="col">SN.</th>
+                            <th scope="col">Role's</th>
+                            <th scope="col">Permission's</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($roles as $key => $role)
+                        <tr>
+                            <th scope="row"> {{ ++$key }} </th>
+                            <td>{{ $role->name }}</td>
+                            <td>
+                                
+
+                                  @forelse ($role->permissions as $permission)
+                                      {{-- <span>{{ $permission->name }}</span> <br> --}}
+
+                                      <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="permission_{{ $role->id }}_{{ $permission->id }}">
+                                        <label class="form-check-label" for="permission_{{ $role->id }}_{{ $permission->id }}">
+                                            {{ $permission->name }}
+                                        </label>
+                                    </div>
+                                  @empty
+                                      <span>no permission found!</span>
+                                  @endforelse
+                                  {{-- {{ $role->permissions as $permission }} --}}
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="#" class="btn btn-primary btn-sm">Edit</a>
+                                    <a href="{{ route('role.delete',$role->id) }}" class="btn btn-danger btn-sm">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                            <tr><td colspan="3">No data found!</td></tr>
+                        @endforelse
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -37,6 +134,10 @@
     <script>
         setTimeout(function() {
             $(".alert").alert('close');
-        }, 1000);
-    </script>
+        }, 2000);
+
+        setTimeout(function() {
+            document.getElementById("error-message").remove();
+        }, 2000); // 3000 milliseconds = 3 seconds
+</script>
 @endpush

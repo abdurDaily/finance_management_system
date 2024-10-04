@@ -39,6 +39,9 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->name('role.')->prefix('role-permission')->group(function () {
     Route::get('/index', [RolePermissionController::class, 'index'])->name('index');
     Route::post('/index', [RolePermissionController::class, 'storeRole'])->name('store');
+    Route::post('/permission', [RolePermissionController::class, 'storePermission'])->name('store.permission');
+    Route::get('/delete-role/{id}', [RolePermissionController::class, 'deleteRole'])->name('delete');
+    Route::get('/delete-role/{id}', [RolePermissionController::class, 'deleteRole'])->name('delete');
 });
 
 require __DIR__.'/auth.php';
