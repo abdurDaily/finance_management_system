@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Backend\HomeController;
+use App\Http\Controllers\Backend\Role\RolePermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+//**ROLE AND PERMISSION */
+Route::middleware('auth')->name('role.')->prefix('role-permission')->group(function () {
+    Route::get('/index', [RolePermissionController::class, 'index'])->name('index');
+    Route::post('/index', [RolePermissionController::class, 'storeRole'])->name('store');
 });
 
 require __DIR__.'/auth.php';
