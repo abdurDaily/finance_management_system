@@ -55,5 +55,31 @@ class RolePermissionController extends Controller
     }
 
 
+    //**ASSIGNING PERMISSION  */
+    public function assignPermissions(Request $request){
+        $request->validate([
+            'permissions' => 'required|array|min:1',
+        ], [
+            'permissions.required' => 'Please select at least one permission.',
+            'permissions.array' => 'Permissions must be an array.',
+            'permissions.min' => 'Please select at least one permission.',
+        ]);
+
+        $role = Role::find($request->role_id);
+        $permissions = Permission::whereIn('id', $request->permissions)->get();
+        $role->syncPermissions($permissions);
+        Session::flash('permissionAssin', 'Permissions assigned successfully!');
+        return back();
+    }
+
+
+    public function getRolePermissions($id)
+    {
+        $role = Role::find($id);
+        $permissions = $role->permissions->pluck('id')->toArray();
+        return response()->json($permissions);
+    }
+
     
+        
 }

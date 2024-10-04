@@ -81,6 +81,12 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
+                @if(session()->has('permissionAssin'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session()->get('permissionAssin') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
                 <table class="table table-bordered  table-hover table-striped ">
                     <thead>
                         <tr>
@@ -99,14 +105,11 @@
                                 
 
                                   @forelse ($role->permissions as $permission)
-                                      {{-- <span>{{ $permission->name }}</span> <br> --}}
-
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="permission_{{ $role->id }}_{{ $permission->id }}">
-                                        <label class="form-check-label" for="permission_{{ $role->id }}_{{ $permission->id }}">
-                                            {{ $permission->name }}
-                                        </label>
-                                    </div>
+                                     <span>{{ $permission->name }} 
+                                         @if (!$loop->last)
+                                           <span> | </span>
+                                         @endif 
+                                     </span>
                                   @empty
                                       <span>no permission found!</span>
                                   @endforelse
@@ -116,6 +119,9 @@
                                 <div class="btn-group">
                                     <a href="#" class="btn btn-primary btn-sm">Edit</a>
                                     <a href="{{ route('role.delete',$role->id) }}" class="btn btn-danger btn-sm">Delete</a>
+                                    <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#permissionRole" onclick="setRoleId({{ $role->id }})">permi</a>
+                                    {{-- <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#permissionRole" onclick="setRoleId({{ $role->id }})">permi</a> --}}
+                                    {{-- <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#permissionRole">permi</a> --}}
                                 </div>
                             </td>
                         </tr>
@@ -127,6 +133,47 @@
                 </table>
             </div>
         </div>
+
+
+
+
+
+
+        {{-- MODAL --}}
+        <!-- Button trigger modal -->
+  
+        <!-- Modal -->
+<div class="modal fade" id="permissionRole" tabindex="-1" aria-labelledby="permissionRoleLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="permissionRoleLabel">Give Permission's</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="{{ route('role.assign.permissions') }}" method="post" >
+                @csrf
+                <input type="hidden" name="role_id" id="role_id" value="">
+                <div class="row">
+                    @foreach ($allPermissions as $permission)
+                        <div class="col-lg-6 card p-3">
+                            <div class="form-check ">
+                                <input class="form-check-input" type="checkbox" value="{{ $permission->id }}" name="permissions[]" id="permission_{{ $permission->id }}" 
+                                    @if (in_array($permission->id, $role->permissions->pluck('id')->toArray())) checked @endif>
+                                <label class="form-check-label" for="permission_{{ $permission->id }}">
+                                    &nbsp; {{ $permission->name }}
+                                </label>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                <button type="submit" class="btn  btn-primary mb-3 w-100 border-0">submit</button>
+              </form>
+            </div>
+        </div>
+    </div>
+</div>
+{{-- MODAL END --}}
     </div>
 @endsection
 
@@ -139,5 +186,29 @@
         setTimeout(function() {
             document.getElementById("error-message").remove();
         }, 2000); // 3000 milliseconds = 3 seconds
+
+    // function setRoleId(roleId) {
+    //     document.getElementById("role_id").value = roleId;
+    // }
+
+
+    function setRoleId(roleId) {
+    document.getElementById("role_id").value = roleId;
+    var url = '{{ route('role.get.role.permissions', ['id' => 'roleId']) }}';
+    url = url.replace('roleId', roleId);
+    $.ajax({
+        type: 'GET',
+        url: url,
+        success: function(data) {
+            // Uncheck all checkboxes
+            $('input[name="permissions[]"]').prop('checked', false);
+            // Check the checkboxes based on the permission IDs
+            $.each(data, function(index, value) {
+                $('#permission_' + value).prop('checked', true);
+            });
+        }
+    });
+}
+}
 </script>
 @endpush
