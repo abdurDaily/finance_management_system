@@ -15,7 +15,7 @@ class RolePermissionController extends Controller
         $roles = Role::select('id','name')->latest()->get();
         $rolesWithPermission = Role::with('permissions')->get();
         $allPermissions = Permission::select('id','name')->get();
-        // dd($rolesWithPermission);
+        
         return view('Backend.RolePermission.Index',compact('roles','rolesWithPermission','allPermissions'));
     }
 

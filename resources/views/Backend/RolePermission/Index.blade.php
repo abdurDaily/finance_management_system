@@ -119,9 +119,7 @@
                                 <div class="btn-group">
                                     <a href="#" class="btn btn-primary btn-sm">Edit</a>
                                     <a href="{{ route('role.delete',$role->id) }}" class="btn btn-danger btn-sm">Delete</a>
-                                    <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#permissionRole" onclick="setRoleId({{ $role->id }})">permi</a>
-                                    {{-- <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#permissionRole" onclick="setRoleId({{ $role->id }})">permi</a> --}}
-                                    {{-- <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#permissionRole">permi</a> --}}
+                                    <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#permissionRole" onclick="setRoleId({{ $role->id }}, {{ json_encode(collect($role->permissions)->pluck('id')->toArray()) }})">permi</a>
                                 </div>
                             </td>
                         </tr>
@@ -143,37 +141,36 @@
         <!-- Button trigger modal -->
   
         <!-- Modal -->
-<div class="modal fade" id="permissionRole" tabindex="-1" aria-labelledby="permissionRoleLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h1 class="modal-title fs-5" id="permissionRoleLabel">Give Permission's</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <form action="{{ route('role.assign.permissions') }}" method="post" >
-                @csrf
-                <input type="hidden" name="role_id" id="role_id" value="">
-                <div class="row">
-                    @foreach ($allPermissions as $permission)
-                        <div class="col-lg-6 card p-3">
-                            <div class="form-check ">
-                                <input class="form-check-input" type="checkbox" value="{{ $permission->id }}" name="permissions[]" id="permission_{{ $permission->id }}" 
-                                    @if (in_array($permission->id, $role->permissions->pluck('id')->toArray())) checked @endif>
-                                <label class="form-check-label" for="permission_{{ $permission->id }}">
-                                    &nbsp; {{ $permission->name }}
-                                </label>
-                            </div>
+        <div class="modal fade" id="permissionRole" tabindex="-1" aria-labelledby="permissionRoleLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="permissionRoleLabel">Give Permission's</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                    <form action="{{ route('role.assign.permissions') }}" method="post" >
+                        @csrf
+                        <input type="hidden" name="role_id" id="role_id" value="">
+                        <div class="row">
+                            @foreach ($allPermissions as $permission)
+                                <div class="col-lg-6 card p-3">
+                                    <div class="form-check ">
+                                        <input class="permissionCheckbox form-check-input" type="checkbox" value="{{ $permission->id }}" name="permissions[]" id="permission_{{ $permission->id }}" >
+                                        <label class="form-check-label" for="permission_{{ $permission->id }}">
+                                            &nbsp; {{ $permission->name }}
+                                        </label>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
-                    @endforeach
+                        <button type="submit" class="btn  btn-primary mb-3 w-100 border-0">submit</button>
+                    </form>
+                    </div>
                 </div>
-                <button type="submit" class="btn  btn-primary mb-3 w-100 border-0">submit</button>
-              </form>
             </div>
         </div>
-    </div>
-</div>
-{{-- MODAL END --}}
+        {{-- MODAL END --}}
     </div>
 @endsection
 
@@ -187,8 +184,21 @@
             document.getElementById("error-message").remove();
         }, 2000); // 3000 milliseconds = 3 seconds
 
-    function setRoleId(roleId) {
+    function setRoleId(roleId, permissions) {
         document.getElementById("role_id").value = roleId;
+        
+        
+        $('.permissionCheckbox').each((index,checkbox)=>{
+            let isExists = Object.values(permissions).includes(Number(checkbox.value));
+            isExists ? checkbox.checked = true :  checkbox.checked  = false;
+            
+            // console.log(permissions.contains(checkbox.value));
+            
+            
+            // checkbox.prop('checked', true)
+            
+        })
+        
     }
     
 </script>
